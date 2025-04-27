@@ -1,0 +1,19 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#legend {
+    margin-top: 10px;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    padding: 6px;
+    background: lightsteelblue;
+    border-radius: 5px;
+    pointer-events: none;
+}
