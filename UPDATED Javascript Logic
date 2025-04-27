@@ -1,0 +1,60 @@
+// Load data and create the scatterplot
+d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/cyclist-data.json").then(data => {
+    const svg = d3.select("#scatterplot"),
+        margin = { top: 20, right: 30, bottom: 40, left: 40 },
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom;
+
+    const g = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleLinear()
+        .domain(d3.extent(data, d => d.Year))
+        .range([0, width]);
+
+    const y = d3.scaleTime()
+        .domain(d3.extent(data, d => {
+            const minutes = d.Seconds / 60;
+            return d3.timeSecond.offset(new Date(0), minutes);
+        }))
+        .range([height, 0]);
+
+    const xAxis = d3.axisBottom(x)
+        .tickFormat(d3.format("d"));
+
+    const yAxis = d3.axisLeft(y)
+        .tickFormat(d3.timeFormat("%M:%S"));
+
+    g.append("g")
+        .attr("class", "x-axis")
+        .attr("id", "x-axis")
+        .attr("transform", `translate(0,${height})`)
+        .call(xAxis);
+
+    g.append("g")
+        .attr("class", "y-axis")
+        .attr("id", "y-axis")
+        .call(yAxis);
+
+    const tooltip = d3.select("#tooltip");
+
+    g.selectAll(".dot")
+        .data(data)
+        .enter().append("circle")
+        .attr("class", "dot")
+        .attr("cx", d => x(d.Year))
+        .attr("cy", d => y(d3.timeSecond.offset(new Date(0), d.Seconds / 60)))
+        .attr("r", 5)
+        .attr("data-xvalue", d => d.Year)
+        .attr("data-yvalue", d => d3.timeSecond.offset(new Date(0), d.Seconds / 60))
+        .on("mouseover", (event, d) => {
+            tooltip.transition().duration(200).style("opacity", 0.9);
+            tooltip.html(`${d.Name}: ${d.Nationality}<br>${d.Year}: ${d.Seconds} seconds`)
+                .attr("data-year", d.Year)
+                .style("left", `${event.pageX + 5}px`)
+                .style("top", `${event.pageY - 28}px`);
+        })
+        .on("mouseout", () => {
+            tooltip.transition().duration(500).style("opacity", 0);
+        });
+});
