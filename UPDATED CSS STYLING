@@ -1,0 +1,17 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#container {
+    text-align: center;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    padding: 5px;
+    background: lightgrey;
+    border: 1px solid gray;
+    border-radius: 5px;
+    pointer-events: none;
+}
